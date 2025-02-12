@@ -41,4 +41,27 @@ public class Employee {
             .mapToDouble(entry -> entry.getValue() * hourlyRate)
             .sum();
     }
+
+    public String toCSV() {
+        StringBuilder csv = new StringBuilder();
+        csv.append(name).append(",").append(id).append(",").append(hourlyRate);
+        for (Map.Entry<LocalDate, Double> entry : hoursWorked.entrySet()) {
+            csv.append(",").append(entry.getKey()).append(",").append(entry.getValue());
+        }
+        return csv.toString();
+    }
+
+    public static Employee fromCSV(String csv) {
+        String[] parts = csv.split(",");
+        String name = parts[0];
+        int id = Integer.parseInt(parts[1]);
+        double hourlyRate = Double.parseDouble(parts[2]);
+        Employee employee = new Employee(name, id, hourlyRate);
+        for (int i = 3; i < parts.length; i += 2) {
+            LocalDate date = LocalDate.parse(parts[i]);
+            double hours = Double.parseDouble(parts[i + 1]);
+            employee.addHoursWorked(date, hours);
+        }
+        return employee;
+    }
 }

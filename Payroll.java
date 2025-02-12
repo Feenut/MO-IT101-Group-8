@@ -1,16 +1,20 @@
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Payroll {
     private List<Employee> employees;
+    private static final String FILE_PATH = "Employees.csv";
 
     public Payroll() {
         employees = new ArrayList<>();
+        loadEmployees();
     }
 
     public void addEmployee(Employee employee) {
         employees.add(employee);
+        saveEmployees();
     }
 
     public void processPayroll() {
@@ -35,5 +39,27 @@ public class Payroll {
 
     public List<Employee> getEmployees() {
         return employees;
+    }
+
+    private void loadEmployees() {
+        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                employees.add(Employee.fromCSV(line));
+            }
+        } catch (IOException e) {
+            System.out.println("No existing employee data found.");
+        }
+    }
+
+    public void saveEmployees() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (Employee employee : employees) {
+                bw.write(employee.toCSV());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
