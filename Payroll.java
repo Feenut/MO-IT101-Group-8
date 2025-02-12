@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Payroll {
     private List<Employee> employees;
-    private static final String FILE_PATH = "Employees.csv";
+    private static final String FILE_PATH = "MotorPH Payroll System/Employees.csv";
 
     public Payroll() {
         employees = new ArrayList<>();
@@ -17,14 +17,23 @@ public class Payroll {
         saveEmployees();
     }
 
-    public void processPayroll() {
+    public void processPayroll(LocalDate startDate, LocalDate endDate) {
         for (Employee employee : employees) {
-            double pay = employee.calculatePay(LocalDate.MIN, LocalDate.MAX);
+            double grossPay = employee.calculatePay(startDate, endDate);
+            double totalDeductions = employee.calculateTotalDeductions(grossPay);
+            double netPay = grossPay - totalDeductions;
+            
+            System.out.println("=======================================");
             System.out.println("Employee ID: " + employee.getId());
             System.out.println("Employee Name: " + employee.getName());
-            System.out.println("Hourly Rate: PHP " + employee.getHourlyRate());
-            System.out.println("Total Pay: PHP " + pay);
-            System.out.println("---------------");
+            System.out.println("Gross Pay: PHP " + grossPay);
+            System.out.println("SSS Deduction: PHP " + employee.calculateSSSDeduction(grossPay));
+            System.out.println("PhilHealth Deduction: PHP " + employee.calculatePhilHealthDeduction(grossPay));
+            System.out.println("Pag-IBIG Deduction: PHP " + employee.calculatePagIBIGDeduction(grossPay));
+            System.out.println("Tax Deduction: PHP " + employee.calculateTaxDeduction(grossPay));
+            System.out.println("Total Deductions: PHP " + totalDeductions);
+            System.out.println("Net Pay: PHP " + netPay);
+            System.out.println("=======================================");
         }
     }
 

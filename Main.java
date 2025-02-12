@@ -67,7 +67,7 @@ public class Main {
                     enterHoursWorked(payroll, scanner);
                     break;
                 case 3:
-                    payroll.processPayroll();
+                    processPayrollMenu(payroll, scanner);
                     break;
                 case 4:
                     backToRoleSelection = true;
@@ -97,9 +97,16 @@ public class Main {
                     boolean authenticated = false;
                     Employee loggedInEmployee = null;
 
-                    while (!authenticated) {
-                        System.out.print("Enter your name: ");
+                    while (!authenticated && !backToRoleSelection) {
+                        System.out.println("\n=======================================");
+                        System.out.println("          Enter Login Details");
+                        System.out.println("=======================================");
+                        System.out.print("Enter your name (or type 'back' to go to role selection): ");
                         String name = scanner.nextLine();
+                        if (name.equalsIgnoreCase("back")) {
+                            backToRoleSelection = true;
+                            break;
+                        }
                         System.out.print("Enter your employee ID: ");
                         int id = scanner.nextInt();
                         scanner.nextLine(); // Consume newline
@@ -187,6 +194,17 @@ public class Main {
         payroll.saveEmployees();
     }
 
+    private static void processPayrollMenu(Payroll payroll, Scanner scanner) {
+        System.out.print("Enter start date (YYYY-MM-DD): ");
+        String startDateStr = scanner.next();
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        System.out.print("Enter end date (YYYY-MM-DD): ");
+        String endDateStr = scanner.next();
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+        payroll.processPayroll(startDate, endDate);
+    }
+
     private static void viewPayroll(Employee employee, Scanner scanner) {
         System.out.print("Enter start date (YYYY-MM-DD): ");
         String startDateStr = scanner.next();
@@ -197,11 +215,18 @@ public class Main {
 
         System.out.println("Displaying payroll details for: " + employee.getName());
         double pay = employee.calculatePay(startDate, endDate);
+        double totalDeductions = employee.calculateTotalDeductions(pay);
+        double netPay = pay - totalDeductions;
         System.out.println("=======================================");
         System.out.println("Employee ID: " + employee.getId());
         System.out.println("Employee Name: " + employee.getName());
-        System.out.println("Hourly Rate: PHP " + employee.getHourlyRate());
-        System.out.println("Total Pay from " + startDate + " to " + endDate + ": PHP " + pay);
+        System.out.println("Gross Pay: PHP " + pay);
+        System.out.println("SSS Deduction: PHP " + employee.calculateSSSDeduction(pay));
+        System.out.println("PhilHealth Deduction: PHP " + employee.calculatePhilHealthDeduction(pay));
+        System.out.println("Pag-IBIG Deduction: PHP " + employee.calculatePagIBIGDeduction(pay));
+        System.out.println("Tax Deduction: PHP " + employee.calculateTaxDeduction(pay));
+        System.out.println("Total Deductions: PHP " + totalDeductions);
+        System.out.println("Net Pay: PHP " + netPay);
         System.out.println("=======================================");
     }
 }
