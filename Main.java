@@ -53,9 +53,10 @@ public class Main {
             System.out.println("1. Add Employees");
             System.out.println("2. Enter Hours Worked");
             System.out.println("3. Process Payroll");
-            System.out.println("4. Back to Role Selection");
+            System.out.println("4. Inventory Management");
+            System.out.println("5. Back to Role Selection");
             System.out.println("=======================================");
-            System.out.print("Choose an option (1-4): ");
+            System.out.print("Choose an option (1-5): ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
 
@@ -70,6 +71,9 @@ public class Main {
                     processPayrollMenu(payroll, scanner);
                     break;
                 case 4:
+                    ShelfWatch.displayMenu();
+                    break;
+                case 5:
                     backToRoleSelection = true;
                     break;
                 default:
@@ -173,11 +177,24 @@ public class Main {
             String name = scanner.nextLine();
             System.out.print("ID: ");
             int id = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            System.out.print("Position: ");
+            String position = scanner.nextLine();
+            System.out.print("Department: ");
+            String department = scanner.nextLine();
+            System.out.print("SSS Number: ");
+            String sssNumber = scanner.nextLine();
+            System.out.print("PhilHealth Number: ");
+            String philHealthNumber = scanner.nextLine();
+            System.out.print("Pag-IBIG Number: ");
+            String pagIbigNumber = scanner.nextLine();
+            System.out.print("TIN: ");
+            String tin = scanner.nextLine();
             System.out.print("Hourly Rate (PHP): ");
             double hourlyRate = scanner.nextDouble();
             scanner.nextLine(); // Consume newline
 
-            payroll.addEmployee(new Employee(name, id, hourlyRate));
+            payroll.addEmployee(new Employee(name, id, position, department, sssNumber, philHealthNumber, pagIbigNumber, tin, hourlyRate));
         }
     }
 
@@ -220,6 +237,8 @@ public class Main {
         System.out.println("=======================================");
         System.out.println("Employee ID: " + employee.getId());
         System.out.println("Employee Name: " + employee.getName());
+        System.out.println("Position: " + employee.getPosition());
+        System.out.println("Department: " + employee.getDepartment());
         System.out.println("Gross Pay: PHP " + pay);
         System.out.println("SSS Deduction: PHP " + employee.calculateSSSDeduction(pay));
         System.out.println("PhilHealth Deduction: PHP " + employee.calculatePhilHealthDeduction(pay));

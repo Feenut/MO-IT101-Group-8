@@ -18,22 +18,22 @@ public class Payroll {
     }
 
     public void processPayroll(LocalDate startDate, LocalDate endDate) {
+        System.out.println("Employee No\tEmployee Full Name\tPosition\tDepartment\tGross Income\tSOCIAL SECURITY SYSTEM\t\tPHILHEALTH\t\tPAG-IBIG\t\tBIR\t\tNet Pay");
+        System.out.println("\t\t\t\t\t\tSocial Security No.\tSocial Security Contribution\tPhilhealth No.\tPhilhealth Contribution\tPag-ibig No.\tPag-Ibig Contribution\tTIN\tWithholding Tax");
+
         for (Employee employee : employees) {
             double grossPay = employee.calculatePay(startDate, endDate);
-            double totalDeductions = employee.calculateTotalDeductions(grossPay);
+            double sssDeduction = employee.calculateSSSDeduction(grossPay);
+            double philHealthDeduction = employee.calculatePhilHealthDeduction(grossPay);
+            double pagIbigDeduction = employee.calculatePagIBIGDeduction(grossPay);
+            double taxDeduction = employee.calculateTaxDeduction(grossPay);
+            double totalDeductions = sssDeduction + philHealthDeduction + pagIbigDeduction + taxDeduction;
             double netPay = grossPay - totalDeductions;
-            
-            System.out.println("=======================================");
-            System.out.println("Employee ID: " + employee.getId());
-            System.out.println("Employee Name: " + employee.getName());
-            System.out.println("Gross Pay: PHP " + grossPay);
-            System.out.println("SSS Deduction: PHP " + employee.calculateSSSDeduction(grossPay));
-            System.out.println("PhilHealth Deduction: PHP " + employee.calculatePhilHealthDeduction(grossPay));
-            System.out.println("Pag-IBIG Deduction: PHP " + employee.calculatePagIBIGDeduction(grossPay));
-            System.out.println("Tax Deduction: PHP " + employee.calculateTaxDeduction(grossPay));
-            System.out.println("Total Deductions: PHP " + totalDeductions);
-            System.out.println("Net Pay: PHP " + netPay);
-            System.out.println("=======================================");
+
+            System.out.printf("%d\t%s\t%s\t%s\t%.2f\t%s\t%.2f\t%s\t%.2f\t%s\t%.2f\t%s\t%.2f\t%.2f\n",
+                employee.getId(), employee.getName(), employee.getPosition(), employee.getDepartment(), grossPay,
+                employee.getSssNumber(), sssDeduction, employee.getPhilHealthNumber(), philHealthDeduction,
+                employee.getPagIbigNumber(), pagIbigDeduction, employee.getTin(), taxDeduction, netPay);
         }
     }
 
@@ -54,7 +54,11 @@ public class Payroll {
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = br.readLine()) != null) {
-                employees.add(Employee.fromCSV(line));
+                try {
+                    employees.add(Employee.fromCSV(line));
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Skipping invalid employee entry: " + line);
+                }
             }
         } catch (IOException e) {
             System.out.println("No existing employee data found.");

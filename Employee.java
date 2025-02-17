@@ -5,12 +5,24 @@ import java.util.Map;
 public class Employee {
     private String name;
     private int id;
+    private String position;
+    private String department;
+    private String sssNumber;
+    private String philHealthNumber;
+    private String pagIbigNumber;
+    private String tin;
     private double hourlyRate;
     private Map<LocalDate, Double> hoursWorked;
 
-    public Employee(String name, int id, double hourlyRate) {
+    public Employee(String name, int id, String position, String department, String sssNumber, String philHealthNumber, String pagIbigNumber, String tin, double hourlyRate) {
         this.name = name;
         this.id = id;
+        this.position = position;
+        this.department = department;
+        this.sssNumber = sssNumber;
+        this.philHealthNumber = philHealthNumber;
+        this.pagIbigNumber = pagIbigNumber;
+        this.tin = tin;
         this.hourlyRate = hourlyRate;
         this.hoursWorked = new HashMap<>();
     }
@@ -21,6 +33,30 @@ public class Employee {
 
     public int getId() {
         return id;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public String getSssNumber() {
+        return sssNumber;
+    }
+
+    public String getPhilHealthNumber() {
+        return philHealthNumber;
+    }
+
+    public String getPagIbigNumber() {
+        return pagIbigNumber;
+    }
+
+    public String getTin() {
+        return tin;
     }
 
     public double getHourlyRate() {
@@ -99,7 +135,9 @@ public class Employee {
 
     public String toCSV() {
         StringBuilder csv = new StringBuilder();
-        csv.append(name).append(",").append(id).append(",").append(hourlyRate);
+        csv.append(name).append(",").append(id).append(",").append(position).append(",").append(department).append(",")
+           .append(sssNumber).append(",").append(philHealthNumber).append(",").append(pagIbigNumber).append(",").append(tin).append(",")
+           .append(hourlyRate);
         for (Map.Entry<LocalDate, Double> entry : hoursWorked.entrySet()) {
             csv.append(",").append(entry.getKey()).append(",").append(entry.getValue());
         }
@@ -108,11 +146,20 @@ public class Employee {
 
     public static Employee fromCSV(String csv) {
         String[] parts = csv.split(",");
+        if (parts.length < 9) {
+            throw new IllegalArgumentException("Invalid CSV data: " + csv);
+        }
         String name = parts[0];
         int id = Integer.parseInt(parts[1]);
-        double hourlyRate = Double.parseDouble(parts[2]);
-        Employee employee = new Employee(name, id, hourlyRate);
-        for (int i = 3; i < parts.length; i += 2) {
+        String position = parts[2];
+        String department = parts[3];
+        String sssNumber = parts[4];
+        String philHealthNumber = parts[5];
+        String pagIbigNumber = parts[6];
+        String tin = parts[7];
+        double hourlyRate = Double.parseDouble(parts[8]);
+        Employee employee = new Employee(name, id, position, department, sssNumber, philHealthNumber, pagIbigNumber, tin, hourlyRate);
+        for (int i = 9; i < parts.length; i += 2) {
             LocalDate date = LocalDate.parse(parts[i]);
             double hours = Double.parseDouble(parts[i + 1]);
             employee.addHoursWorked(date, hours);
