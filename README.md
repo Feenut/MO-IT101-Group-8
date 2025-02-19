@@ -9,3 +9,5 @@
 # Added inventory system based on Jhonalyn's code. Tweaked some of the code as it has errors in vscode
 # Chnaged the Process Payroll, add employee details, etc. based on Camu
 # Checked for error handling.
+# Updated 2:19 AM 2/20/25
+# Fixed path for payroll csv file: C:\path\to\your\project\ path will depend on your file explorer directory
