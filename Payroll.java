@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Payroll {
     private List<Employee> employees;
-    private static final String FILE_PATH = "MotorPH Payroll System/Employees.csv";
+    private static final String FILE_PATH = "C:\\Users\\Johanzen\\Documents\\PROJECTS IT\\MotorPH Payroll System\\Employees.csv";
 
     public Payroll() {
         employees = new ArrayList<>();

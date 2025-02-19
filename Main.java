@@ -11,12 +11,14 @@ public class Main {
         System.out.println("=======================================");
         System.out.println("          Welcome to the Payroll System");
         System.out.println("=======================================");
+        System.out.println("---------------------------------------");
         boolean exit = false;
 
         while (!exit) {
             System.out.println("\n=======================================");
             System.out.println("          Select Role to Log In");
             System.out.println("=======================================");
+            System.out.println("---------------------------------------");
             System.out.println("1. Admin");
             System.out.println("2. Employee");
             System.out.println("3. Exit");
@@ -50,6 +52,7 @@ public class Main {
             System.out.println("\n=======================================");
             System.out.println("                Admin Menu");
             System.out.println("=======================================");
+            System.out.println("---------------------------------------");
             System.out.println("1. Add Employees");
             System.out.println("2. Enter Hours Worked");
             System.out.println("3. Process Payroll");
@@ -89,6 +92,7 @@ public class Main {
             System.out.println("\n=======================================");
             System.out.println("            Employee Login");
             System.out.println("=======================================");
+            System.out.println("---------------------------------------");
             System.out.println("1. Log in");
             System.out.println("2. Back to Role Selection");
             System.out.println("=======================================");
@@ -105,6 +109,7 @@ public class Main {
                         System.out.println("\n=======================================");
                         System.out.println("          Enter Login Details");
                         System.out.println("=======================================");
+                        System.out.println("---------------------------------------");
                         System.out.print("Enter your name (or type 'back' to go to role selection): ");
                         String name = scanner.nextLine();
                         if (name.equalsIgnoreCase("back")) {
@@ -141,6 +146,7 @@ public class Main {
             System.out.println("\n=======================================");
             System.out.println("              Employee Menu");
             System.out.println("=======================================");
+            System.out.println("---------------------------------------");
             System.out.println("1. View Payroll");
             System.out.println("2. Back to Role Selection");
             System.out.println("=======================================");
@@ -223,6 +229,10 @@ public class Main {
     }
 
     private static void viewPayroll(Employee employee, Scanner scanner) {
+        System.out.println("=======================================");
+        System.out.println("Displaying payroll details for: " + employee.getName());
+        System.out.println("=======================================");
+        System.out.println("---------------------------------------");
         System.out.print("Enter start date (YYYY-MM-DD): ");
         String startDateStr = scanner.next();
         LocalDate startDate = LocalDate.parse(startDateStr);
@@ -230,11 +240,9 @@ public class Main {
         String endDateStr = scanner.next();
         LocalDate endDate = LocalDate.parse(endDateStr);
 
-        System.out.println("Displaying payroll details for: " + employee.getName());
         double pay = employee.calculatePay(startDate, endDate);
         double totalDeductions = employee.calculateTotalDeductions(pay);
         double netPay = pay - totalDeductions;
-        System.out.println("=======================================");
         System.out.println("Employee ID: " + employee.getId());
         System.out.println("Employee Name: " + employee.getName());
         System.out.println("Position: " + employee.getPosition());
@@ -247,5 +255,6 @@ public class Main {
         System.out.println("Total Deductions: PHP " + totalDeductions);
         System.out.println("Net Pay: PHP " + netPay);
         System.out.println("=======================================");
+        System.out.println("---------------------------------------");
     }
 }
