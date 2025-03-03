@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.time.format.DateTimeParseException;
 
 public class Employee {
     private String name;
@@ -133,6 +134,33 @@ public class Employee {
         return sss + philHealth + pagIBIG + tax;
     }
 
+    public double calculateBasicDeduction(double grossPay) {
+        // Basic deduction is the sum of mandatory government contributions
+        double sss = calculateSSSDeduction(grossPay);
+        double philHealth = calculatePhilHealthDeduction(grossPay);
+        double pagIBIG = calculatePagIBIGDeduction(grossPay);
+        
+        return sss + philHealth + pagIBIG;
+    }
+
+    public double calculateNetSalary(double grossPay) {
+        // Net salary is gross pay minus all deductions
+        double totalDeductions = calculateTotalDeductions(grossPay);
+        return grossPay - totalDeductions;
+    }
+
+    public double calculateWeeklySalary(LocalDate startDate, LocalDate endDate) {
+        // Calculate weekly salary based on hours worked in the specified period
+        double totalPay = calculatePay(startDate, endDate);
+        
+        // Calculate number of weeks in the period (assuming a complete week)
+        long days = java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        double weeks = Math.ceil(days / 7.0);
+        
+        // Return average weekly salary
+        return totalPay / weeks;
+    }
+
     public String toCSV() {
         StringBuilder csv = new StringBuilder();
         csv.append(name).append(",").append(id).append(",").append(position).append(",").append(department).append(",")
@@ -147,23 +175,40 @@ public class Employee {
     public static Employee fromCSV(String csv) {
         String[] parts = csv.split(",");
         if (parts.length < 9) {
-            throw new IllegalArgumentException("Invalid CSV data: " + csv);
+            throw new IllegalArgumentException("Invalid CSV data: Expected at least 9 fields, got " + parts.length);
         }
-        String name = parts[0];
-        int id = Integer.parseInt(parts[1]);
-        String position = parts[2];
-        String department = parts[3];
-        String sssNumber = parts[4];
-        String philHealthNumber = parts[5];
-        String pagIbigNumber = parts[6];
-        String tin = parts[7];
-        double hourlyRate = Double.parseDouble(parts[8]);
-        Employee employee = new Employee(name, id, position, department, sssNumber, philHealthNumber, pagIbigNumber, tin, hourlyRate);
-        for (int i = 9; i < parts.length; i += 2) {
-            LocalDate date = LocalDate.parse(parts[i]);
-            double hours = Double.parseDouble(parts[i + 1]);
-            employee.addHoursWorked(date, hours);
+        
+        try {
+            String name = parts[0];
+            int id = Integer.parseInt(parts[1]);
+            String position = parts[2];
+            String department = parts[3];
+            String sssNumber = parts[4];
+            String philHealthNumber = parts[5];
+            String pagIbigNumber = parts[6];
+            String tin = parts[7];
+            double hourlyRate = Double.parseDouble(parts[8]);
+            
+            Employee employee = new Employee(name, id, position, department, sssNumber, philHealthNumber, pagIbigNumber, tin, hourlyRate);
+            
+            // Process hours worked entries
+            for (int i = 9; i < parts.length - 1; i += 2) {
+                try {
+                    LocalDate date = LocalDate.parse(parts[i]);
+                    double hours = Double.parseDouble(parts[i + 1]);
+                    employee.addHoursWorked(date, hours);
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("Invalid date format at position " + i + ": " + parts[i]);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Invalid hours format at position " + (i+1) + ": " + parts[i+1]);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    throw new IllegalArgumentException("Missing hours value for date at position " + i);
+                }
+            }
+            
+            return employee;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid number format in CSV: " + e.getMessage());
         }
-        return employee;
     }
 }

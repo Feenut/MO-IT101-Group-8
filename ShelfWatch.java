@@ -3,7 +3,7 @@ import java.io.*;
 
 public class ShelfWatch {
     private static ArrayList<InventoryItem> inventory = new ArrayList<>();
-    private static final String FILE_NAME = "MotorPH Payroll System/inventory.csv";
+    private static final String FILE_NAME = "C:\\Users\\Johanzen\\Documents\\PROJECTS IT\\MotorPH Payroll System\\inventory.csv";
     private static Scanner scanner = new Scanner(System.in);
 
     public static void displayMenu() {
@@ -46,44 +46,78 @@ public class ShelfWatch {
     }
 
     private static void loadInventory() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+        inventory.clear(); // Clear existing inventory before loading
+        File file = new File(FILE_NAME);
+        
+        if (!file.exists()) {
+            System.out.println("No existing inventory file found. Starting with an empty inventory.");
+            return;
+        }
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(", ");
-                if (data.length == 5) {
-                    inventory.add(new InventoryItem(data[0], data[1], data[2], data[3], new Date(Long.parseLong(data[4]))));
-                } else {
+            while ((line = reader.readLine()) != null && !line.trim().isEmpty()) {
+                try {
+                    inventory.add(InventoryItem.fromCSV(line));
+                } catch (IllegalArgumentException e) {
                     System.out.println("Skipping invalid inventory entry: " + line);
+                    System.out.println("Error: " + e.getMessage());
                 }
             }
+            System.out.println("Loaded " + inventory.size() + " items from inventory.");
         } catch (IOException e) {
-            System.out.println("No existing inventory file found. Starting with an empty inventory.");
+            System.out.println("Error reading inventory file: " + e.getMessage());
         }
     }
 
     private static void saveInventory() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (InventoryItem item : inventory) {
-                writer.write(item.getName() + ", " + item.getBrand() + ", " + item.getEngineNumber() + ", " + item.getPurchaseStatus() + ", " + item.getDateAdded().getTime());
+                writer.write(item.getName() + ", " + item.getBrand() + ", " + item.getEngineNumber() + ", " + 
+                             item.getPurchaseStatus() + ", " + item.getDateAdded().getTime());
                 writer.newLine();
             }
+            System.out.println("Inventory saved successfully.");
         } catch (IOException e) {
             System.out.println("Error saving inventory: " + e.getMessage());
         }
     }
 
     private static void addItem() {
-        System.out.print("Enter item name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter brand: ");
-        String brand = scanner.nextLine();
-        System.out.print("Enter engine number: ");
-        String engineNumber = scanner.nextLine();
-        System.out.print("Enter purchase status (Sold/On hand): ");
-        String purchaseStatus = scanner.nextLine();
-        
-        inventory.add(new InventoryItem(name, brand, engineNumber, purchaseStatus, new Date()));
-        System.out.println(name + " has been added to the inventory.");
+        try {
+            System.out.print("Enter item name: ");
+            String name = scanner.nextLine().trim();
+            if (name.isEmpty()) {
+                System.out.println("Item name cannot be empty.");
+                return;
+            }
+            
+            System.out.print("Enter brand: ");
+            String brand = scanner.nextLine().trim();
+            if (brand.isEmpty()) {
+                System.out.println("Brand cannot be empty.");
+                return;
+            }
+            
+            System.out.print("Enter engine number: ");
+            String engineNumber = scanner.nextLine().trim();
+            if (engineNumber.isEmpty()) {
+                System.out.println("Engine number cannot be empty.");
+                return;
+            }
+            
+            System.out.print("Enter purchase status (Sold/On hand): ");
+            String purchaseStatus = scanner.nextLine().trim();
+            if (!purchaseStatus.equalsIgnoreCase("Sold") && !purchaseStatus.equalsIgnoreCase("On hand")) {
+                System.out.println("Purchase status must be either 'Sold' or 'On hand'.");
+                return;
+            }
+            
+            inventory.add(new InventoryItem(name, brand, engineNumber, purchaseStatus, new Date()));
+            System.out.println(name + " has been added to the inventory.");
+        } catch (Exception e) {
+            System.out.println("Error adding item: " + e.getMessage());
+        }
     }
 
     private static void removeItem() {
@@ -111,7 +145,35 @@ public class ShelfWatch {
     }
 
     private static void sortInventory() {
-        inventory.sort(Comparator.comparing(InventoryItem::getDateAdded));
-        System.out.println("Inventory has been sorted by date added.");
+        System.out.println("Sort by:");
+        System.out.println("1. Date Added");
+        System.out.println("2. Name");
+        System.out.println("3. Brand");
+        System.out.print("Choose an option: ");
+        
+        try {
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            
+            switch (choice) {
+                case 1:
+                    inventory.sort(Comparator.comparing(InventoryItem::getDateAdded));
+                    System.out.println("Inventory has been sorted by date added.");
+                    break;
+                case 2:
+                    inventory.sort(Comparator.comparing(InventoryItem::getName));
+                    System.out.println("Inventory has been sorted by name.");
+                    break;
+                case 3:
+                    inventory.sort(Comparator.comparing(InventoryItem::getBrand));
+                    System.out.println("Inventory has been sorted by brand.");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Inventory remains unsorted.");
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.nextLine(); // Clear invalid input
+        }
     }
 }
