@@ -92,3 +92,86 @@
    - Split large methods into smaller, more focused methods
    - Better organization of related functionality
    - Enhanced code readability and maintainability
+
+# CHANGELOG 3/08/2025
+# Payroll Display
+Added professional box-drawing characters (╔, ║, ╚, etc.) for clean borders
+Implemented consistent column alignment and spacing
+Added formatted headers and section dividers
+Enhanced monetary value display with PHP prefix and thousand separators
+Standardized decimal places to 2 digits for all numeric values
+# 2. Time Records Display
+Added new grid layout with 6 columns:
+Date (MM/DD/YYYY format)
+Login Time (HH:mm format)
+Logout Time (HH:mm format)
+Hours Worked (2 decimal places)
+Status (COMPLETE/PARTIAL/ABSENT)
+Notes
+Added employee information header section
+Implemented summary footer with totals and averages
+Added status indicators for attendance tracking
+# 3. Employee Information Display
+Organized into 4 distinct sections:
+Personal Information
+Employment Information
+Government Numbers
+Compensation Details
+Added clear section headers with double-line borders
+Implemented two-column layout for labels and values
+Added proper spacing and alignment for readability
+# 4. Payroll Processing Information
+Enhanced header with company name and system title
+Added pay period information display
+Implemented grid layout for payroll calculations
+Added detailed breakdown sections:
+Base Pay calculation
+Allowances (Rice, Phone, Clothing)
+Deductions (SSS, PhilHealth, Pag-IBIG, Tax)
+Net Pay summary
+# 5. Error Messages
+Standardized error message display with bordered boxes
+Added specific error messages for:
+Invalid date formats
+Employee not found
+Date range validation
+Data loading errors
+# 6. Summary Sections
+Added formatted summary displays for:
+Total employees processed
+Hours worked statistics
+Financial summaries
+Attendance records
+Compensation totals
+# 7. Date Handling
+Implemented consistent date format display:
+Employee view: MM/DD/YYYY
+Admin view: yyyy-MM-dd
+Added date validation with proper error messages
+Enhanced date range display in headers
+# 8. General Formatting
+Standardized all monetary values with:
+PHP prefix
+Thousand separators
+2 decimal places
+
+# 9. Class Organization
+Enhanced Payroll class implementation of FileStorage<Employee> interface
+Improved encapsulation of employee data handling
+Added proper access modifiers for class members
+# 10. Method Refactoring
+Split large methods into smaller, focused methods:
+processEmployeePayroll: Handles individual payroll calculation
+displayPayrollInformation: Manages display formatting
+viewPayrollWithDates: Handles date-based payroll viewing
+loadAttendanceRecords: Manages attendance data loading
+parseCSVLine: Handles CSV parsing logic
+# 11. Data Structures
+Implemented Map<String, Double> for payroll calculations
+Used Map<LocalDate, Employee.AttendanceRecord> for attendance tracking
+Added List<Employee> for employee management
+
+# FILEPATH
+LINE 29 PAYROLL.JAVA: MAKE SURE NAKA DEPENDE SA FILE EXPLORER NIY YUN FILEPATH
+LINE 32 PAYROLL.JAVA: MAKE SURE NAKA DEPENDE SA FILE EXPLORER NIY YUN FILEPATH
+LINE 95 MAIN.JAVA: MAKE SURE NAKA DEPENDE SA FILE EXPLORER NIY YUN FILEPATH
