@@ -1,6 +1,6 @@
 import java.util.Date;
 
-public class InventoryItem {
+public class InventoryItem implements InventoryManageable {
     private String name;
     private String brand;
     private String engineNumber;
@@ -15,8 +15,14 @@ public class InventoryItem {
         this.dateAdded = dateAdded;
     }
 
+    @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return brand + " - Engine #" + engineNumber;
     }
 
     public String getBrand() {
@@ -27,12 +33,23 @@ public class InventoryItem {
         return engineNumber;
     }
 
+    @Override
+    public String getStatus() {
+        return purchaseStatus;
+    }
+    
     public String getPurchaseStatus() {
         return purchaseStatus;
     }
 
+    @Override
     public Date getDateAdded() {
         return dateAdded;
+    }
+
+    @Override
+    public String toCSVFormat() {
+        return name + ", " + brand + ", " + engineNumber + ", " + purchaseStatus + ", " + dateAdded.getTime();
     }
 
     @Override

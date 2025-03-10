@@ -1,13 +1,15 @@
 import java.util.*;
 import java.io.*;
 
-public class ShelfWatch {
-    private static ArrayList<InventoryItem> inventory = new ArrayList<>();
+public class ShelfWatch implements FileStorage<InventoryItem> {
+    private static List<InventoryItem> inventory = new ArrayList<>();
     private static final String FILE_NAME = "C:\\Users\\Johanzen\\Documents\\PROJECTS IT\\MotorPH Payroll System\\inventory.csv";
     private static Scanner scanner = new Scanner(System.in);
 
     public static void displayMenu() {
-        loadInventory();
+        ShelfWatch shelfWatch = new ShelfWatch();
+        inventory = new ArrayList<>(shelfWatch.load());
+        
         while (true) {
             System.out.println("\nInventory Management System");
             System.out.println("1. Add Item");
@@ -23,11 +25,11 @@ public class ShelfWatch {
             switch (choice) {
                 case 1:
                     addItem();
-                    saveInventory();
+                    shelfWatch.save(inventory);
                     break;
                 case 2:
                     removeItem();
-                    saveInventory();
+                    shelfWatch.save(inventory);
                     break;
                 case 3:
                     viewInventory();
@@ -36,7 +38,7 @@ public class ShelfWatch {
                     sortInventory();
                     break;
                 case 5:
-                    saveInventory();
+                    shelfWatch.save(inventory);
                     System.out.println("Exiting Inventory Management. Goodbye!");
                     return;
                 default:
@@ -45,42 +47,50 @@ public class ShelfWatch {
         }
     }
 
-    private static void loadInventory() {
-        inventory.clear(); // Clear existing inventory before loading
+    @Override
+    public List<InventoryItem> load() {
+        ArrayList<InventoryItem> loadedInventory = new ArrayList<>();
         File file = new File(FILE_NAME);
         
         if (!file.exists()) {
             System.out.println("No existing inventory file found. Starting with an empty inventory.");
-            return;
+            return loadedInventory;
         }
         
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null && !line.trim().isEmpty()) {
                 try {
-                    inventory.add(InventoryItem.fromCSV(line));
+                    loadedInventory.add(InventoryItem.fromCSV(line));
                 } catch (IllegalArgumentException e) {
                     System.out.println("Skipping invalid inventory entry: " + line);
                     System.out.println("Error: " + e.getMessage());
                 }
             }
-            System.out.println("Loaded " + inventory.size() + " items from inventory.");
+            System.out.println("Loaded " + loadedInventory.size() + " items from inventory.");
         } catch (IOException e) {
             System.out.println("Error reading inventory file: " + e.getMessage());
         }
+        
+        return loadedInventory;
     }
 
-    private static void saveInventory() {
+    @Override
+    public void save(List<InventoryItem> items) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
-            for (InventoryItem item : inventory) {
-                writer.write(item.getName() + ", " + item.getBrand() + ", " + item.getEngineNumber() + ", " + 
-                             item.getPurchaseStatus() + ", " + item.getDateAdded().getTime());
+            for (InventoryItem item : items) {
+                writer.write(item.toCSVFormat());
                 writer.newLine();
             }
             System.out.println("Inventory saved successfully.");
         } catch (IOException e) {
             System.out.println("Error saving inventory: " + e.getMessage());
         }
+    }
+    
+    @Override
+    public String getFilePath() {
+        return FILE_NAME;
     }
 
     private static void addItem() {
@@ -138,7 +148,7 @@ public class ShelfWatch {
             System.out.println("Inventory is empty.");
         } else {
             System.out.println("Current Inventory:");
-            for (InventoryItem item : inventory) {
+            for (InventoryManageable item : inventory) {
                 System.out.println("- " + item);
             }
         }
