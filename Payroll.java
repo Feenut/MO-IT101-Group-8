@@ -851,7 +851,7 @@ public class Payroll implements FileStorage<Employee> {
         System.out.printf("║ SSS Number           ║ %-65s ║\n", employee.getSssNumber());
         System.out.printf("║ PhilHealth Number    ║ %-65s ║\n", employee.getPhilHealthNumber());
         System.out.printf("║ Pag-IBIG Number      ║ %-65s ║\n", employee.getPagIbigNumber());
-        System.out.printf("║ TIN Number           ║ %-65s ║\n", employee.getTinNumber());
+        System.out.printf("║ TIN Number           ║ %-65s ║\n", employee.getTin());
         
         // Compensation Information
         System.out.println("╠══════════════════════╬═══════════════════════════════════════════════════════════════════════════╣");

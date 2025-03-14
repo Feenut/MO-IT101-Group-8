@@ -1,11 +1,29 @@
 import java.util.*;
 import java.io.*;
 
+/**
+ * ShelfWatch class implements inventory management functionality for MotorPH.
+ * 
+ * This class implements FileStorage interface to handle:
+ * - Inventory item tracking and management
+ * - Adding and removing inventory items
+ * - Sorting and viewing inventory
+ * - Persistence of inventory data to CSV files
+ * 
+ * @author MotorPH Development Team
+ * @version 1.0
+ */
 public class ShelfWatch implements FileStorage<InventoryItem> {
+    /** List of inventory items */
     private static List<InventoryItem> inventory = new ArrayList<>();
+    /** Path to the inventory data file */
     private static final String FILE_NAME = "C:\\Users\\Johanzen\\Documents\\PROJECTS IT\\MotorPH Payroll System\\inventory.csv";
+    /** Scanner for user input */
     private static Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Displays the inventory management menu and handles user interactions
+     */
     public static void displayMenu() {
         ShelfWatch shelfWatch = new ShelfWatch();
         inventory = new ArrayList<>(shelfWatch.load());
@@ -47,6 +65,11 @@ public class ShelfWatch implements FileStorage<InventoryItem> {
         }
     }
 
+    /**
+     * Loads inventory items from the CSV file
+     * 
+     * @return List of loaded inventory items
+     */
     @Override
     public List<InventoryItem> load() {
         ArrayList<InventoryItem> loadedInventory = new ArrayList<>();
@@ -75,6 +98,11 @@ public class ShelfWatch implements FileStorage<InventoryItem> {
         return loadedInventory;
     }
 
+    /**
+     * Saves inventory items to the CSV file
+     * 
+     * @param items List of inventory items to save
+     */
     @Override
     public void save(List<InventoryItem> items) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
@@ -88,11 +116,20 @@ public class ShelfWatch implements FileStorage<InventoryItem> {
         }
     }
     
+    /**
+     * Gets the file path used for inventory storage
+     * 
+     * @return The file path
+     */
     @Override
     public String getFilePath() {
         return FILE_NAME;
     }
 
+    /**
+     * Adds a new item to the inventory
+     * Prompts user for item details and validates input
+     */
     private static void addItem() {
         try {
             System.out.print("Enter item name: ");
@@ -130,6 +167,10 @@ public class ShelfWatch implements FileStorage<InventoryItem> {
         }
     }
 
+    /**
+     * Removes an item from the inventory
+     * Prompts user for item name to remove
+     */
     private static void removeItem() {
         System.out.print("Enter item name to remove: ");
         String name = scanner.nextLine();
@@ -143,6 +184,9 @@ public class ShelfWatch implements FileStorage<InventoryItem> {
         }
     }
 
+    /**
+     * Displays all items in the inventory
+     */
     private static void viewInventory() {
         if (inventory.isEmpty()) {
             System.out.println("Inventory is empty.");
@@ -154,6 +198,10 @@ public class ShelfWatch implements FileStorage<InventoryItem> {
         }
     }
 
+    /**
+     * Sorts the inventory based on user-selected criteria
+     * Supports sorting by date added, name, or brand
+     */
     private static void sortInventory() {
         System.out.println("Sort by:");
         System.out.println("1. Date Added");
